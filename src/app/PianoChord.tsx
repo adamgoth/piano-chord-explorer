@@ -1,5 +1,7 @@
 import React from 'react';
 import PianoKey from './PianoKey';
+import { playChordFunction } from './PianoChordPlayer'; // Import the playChordFunction
+import { FaVolumeUp } from 'react-icons/fa'; // Import the speaker icon
 
 interface PianoChordProps {
   chord: string[];

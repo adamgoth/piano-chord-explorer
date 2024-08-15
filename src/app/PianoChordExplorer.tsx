@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import PianoChord from './PianoChord';
+import { playChordFunction } from './PianoChordPlayer';
+import { FaVolumeUp } from 'react-icons/fa';
 
 interface ScaleOption {
   name: string;
@@ -112,12 +114,17 @@ export const PianoChordExplorer: React.FC = () => {
         Chords in {selectedKey} {selectedScale.name}
       </h3>
 
-      <div className='grid grid-cols-1 gap-4 w-full max-w-3xl'>
+      <div className='flex flex-wrap gap-4 w-full justify-evenly'>
         {chords.map((chord, index) => (
           <div key={index} className='bg-white p-4 rounded shadow'>
-            <h4 className='text-md font-semibold mb-2'>
-              {getChordName(chord)} ({chord.join(' - ')})
-            </h4>
+            <div className='flex items-center mb-2'>
+              <h4 className='text-md font-semibold mr-2'>
+                {getChordName(chord)} ({chord.join(' - ')})
+              </h4>
+              <button onClick={() => playChordFunction(chord)} className='ml-2'>
+                <FaVolumeUp />
+              </button>
+            </div>
             <PianoChord chord={chord} keys={keys} />
           </div>
         ))}
