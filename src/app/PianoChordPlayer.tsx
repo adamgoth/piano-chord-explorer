@@ -18,7 +18,8 @@ const frequencies = {
 };
 
 const playChord = (notes: string[]) => {
-  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  const audioContext = new (window.AudioContext ||
+    (window as any).webkitAudioContext)();
   const gainNode = audioContext.createGain();
   gainNode.gain.setValueAtTime(0.1, audioContext.currentTime); // Lower the volume
   gainNode.connect(audioContext.destination);
