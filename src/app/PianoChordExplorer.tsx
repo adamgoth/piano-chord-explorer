@@ -18,6 +18,7 @@ export const PianoChordExplorer: React.FC = () => {
   });
   const [selectedSound, setSelectedSound] = useState('basicSine');
   const [chords, setChords] = useState<string[][]>([]);
+  const [activeChordIndex, setActiveChordIndex] = useState<number | null>(null);
 
   const keys = [
     'C',
@@ -71,6 +72,13 @@ export const PianoChordExplorer: React.FC = () => {
     if (thirdInterval === 3 && fifthInterval === 6) return `${root} Diminished`;
     if (thirdInterval === 4 && fifthInterval === 8) return `${root} Augmented`;
     return `${root} (${third} ${fifth})`;
+  };
+
+  const playChord = (chord: string[], index: number) => {
+    playChordFunction(chord, selectedSound);
+    setActiveChordIndex(index);
+    // Reset the active state after a short delay
+    setTimeout(() => setActiveChordIndex(null), 500);
   };
 
   useEffect(() => {
@@ -131,15 +139,17 @@ export const PianoChordExplorer: React.FC = () => {
 
       <div className='flex flex-wrap gap-4 w-full justify-evenly'>
         {chords.map((chord, index) => (
-          <div key={index} className='bg-white p-4 rounded shadow'>
+          <div
+            key={index}
+            className={`bg-white p-4 rounded shadow transition-colors duration-200 ${
+              activeChordIndex === index ? 'bg-blue-100' : ''
+            }`}
+          >
             <div className='flex items-center mb-2'>
               <h4 className='text-md font-semibold mr-2'>
                 {getChordName(chord)} ({chord.join(' - ')})
               </h4>
-              <button
-                onClick={() => playChordFunction(chord, selectedSound)}
-                className='ml-2'
-              >
+              <button onClick={() => playChord(chord, index)} className='ml-2'>
                 <FaVolumeUp />
               </button>
             </div>
@@ -153,9 +163,14 @@ export const PianoChordExplorer: React.FC = () => {
         {chords.slice(0, 9).map((chord, index) => (
           <button
             key={index}
-            onClick={() => playChordFunction(chord, selectedSound)}
-            className='aspect-square bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-md 
-                     transition-colors duration-200 flex flex-col items-center justify-center p-2'
+            onClick={() => playChord(chord, index)}
+            className={`aspect-square text-white rounded-lg shadow-md 
+                       transition-colors duration-200 flex flex-col items-center justify-center p-2
+                       ${
+                         activeChordIndex === index
+                           ? 'bg-blue-600'
+                           : 'bg-blue-500'
+                       }`}
           >
             <span className='font-bold'>{getChordName(chord)}</span>
             <span className='text-sm'>{chord.join('-')}</span>
