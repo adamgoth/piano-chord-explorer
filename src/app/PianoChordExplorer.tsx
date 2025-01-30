@@ -147,6 +147,21 @@ export const PianoChordExplorer: React.FC = () => {
           </div>
         ))}
       </div>
+
+      <h3 className='text-lg font-semibold mt-8 mb-4'>Chord Pad</h3>
+      <div className='grid grid-cols-3 gap-4 w-full max-w-md'>
+        {chords.slice(0, 9).map((chord, index) => (
+          <button
+            key={index}
+            onClick={() => playChordFunction(chord, selectedSound)}
+            className='aspect-square bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-md 
+                     transition-colors duration-200 flex flex-col items-center justify-center p-2'
+          >
+            <span className='font-bold'>{getChordName(chord)}</span>
+            <span className='text-sm'>{chord.join('-')}</span>
+          </button>
+        ))}
+      </div>
     </div>
   );
 };
