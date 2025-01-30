@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import PianoChord from './PianoChord';
-import { playChordFunction } from './PianoChordPlayer';
+import { playChordFunction, soundPresets } from './PianoChordPlayer';
 import { FaVolumeUp } from 'react-icons/fa';
 
 interface ScaleOption {
@@ -16,6 +16,7 @@ export const PianoChordExplorer: React.FC = () => {
     name: 'Major',
     intervals: [0, 2, 4, 5, 7, 9, 11],
   });
+  const [selectedSound, setSelectedSound] = useState('basicSine');
   const [chords, setChords] = useState<string[][]>([]);
 
   const keys = [
@@ -43,6 +44,8 @@ export const PianoChordExplorer: React.FC = () => {
     { name: 'Lydian', intervals: [0, 2, 4, 6, 7, 9, 11] },
     { name: 'Mixolydian', intervals: [0, 2, 4, 5, 7, 9, 10] },
   ];
+
+  const soundOptions = Object.keys(soundPresets);
 
   const generateChords = (key: string, scale: ScaleOption) => {
     const keyIndex = keys.indexOf(key);
@@ -108,6 +111,18 @@ export const PianoChordExplorer: React.FC = () => {
             </option>
           ))}
         </select>
+
+        <select
+          value={selectedSound}
+          onChange={(e) => setSelectedSound(e.target.value)}
+          className='p-2 border rounded'
+        >
+          {soundOptions.map((sound) => (
+            <option key={sound} value={sound}>
+              {sound}
+            </option>
+          ))}
+        </select>
       </div>
 
       <h3 className='text-lg font-semibold mb-2'>
@@ -121,7 +136,10 @@ export const PianoChordExplorer: React.FC = () => {
               <h4 className='text-md font-semibold mr-2'>
                 {getChordName(chord)} ({chord.join(' - ')})
               </h4>
-              <button onClick={() => playChordFunction(chord)} className='ml-2'>
+              <button
+                onClick={() => playChordFunction(chord, selectedSound)}
+                className='ml-2'
+              >
                 <FaVolumeUp />
               </button>
             </div>
