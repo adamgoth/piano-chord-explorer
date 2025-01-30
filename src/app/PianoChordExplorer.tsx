@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import PianoChord from './PianoChord';
 import { playChordFunction, soundPresets } from './PianoChordPlayer';
 import { FaVolumeUp } from 'react-icons/fa';
+import { FullPiano } from './FullPiano';
 
 interface ScaleOption {
   name: string;
@@ -19,6 +20,7 @@ export const PianoChordExplorer: React.FC = () => {
   const [selectedSound, setSelectedSound] = useState('basicSine');
   const [chords, setChords] = useState<string[][]>([]);
   const [activeChordIndex, setActiveChordIndex] = useState<number | null>(null);
+  const [activeNotes, setActiveNotes] = useState<string[]>([]);
 
   const keys = [
     'C',
@@ -77,8 +79,12 @@ export const PianoChordExplorer: React.FC = () => {
   const playChord = (chord: string[], index: number) => {
     playChordFunction(chord, selectedSound);
     setActiveChordIndex(index);
-    // Reset the active state after a short delay
-    setTimeout(() => setActiveChordIndex(null), 500);
+    setActiveNotes(chord);
+    // Reset the active states after a short delay
+    setTimeout(() => {
+      setActiveChordIndex(null);
+      setActiveNotes([]);
+    }, 500);
   };
 
   useEffect(() => {
@@ -158,7 +164,11 @@ export const PianoChordExplorer: React.FC = () => {
         ))}
       </div>
 
-      <h3 className='text-lg font-semibold mt-8 mb-4'>Chord Pad</h3>
+      <div className='w-full my-8'>
+        <FullPiano activeNotes={activeNotes} keys={keys} />
+      </div>
+
+      <h3 className='text-lg font-semibold mb-4'>Chord Pad</h3>
       <div className='grid grid-cols-3 gap-4 w-full max-w-md'>
         {chords.slice(0, 9).map((chord, index) => (
           <button
