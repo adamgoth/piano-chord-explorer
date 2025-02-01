@@ -1,5 +1,5 @@
 import React from 'react';
-import { soundPresets } from './PianoChordPlayer';
+import { soundPresets } from './audioEngine';
 
 interface SoundExplorerProps {
   selectedSound: string;

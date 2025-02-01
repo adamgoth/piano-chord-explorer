@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { PianoChordExplorer, ScaleOption } from './PianoChordExplorer';
 import { ChordPad } from './ChordPad';
 import { SoundExplorer } from './SoundExplorer';
-import { playChordFunction } from './PianoChordPlayer';
+import { playChordFunction } from './audioEngine';
 
 export default function Home() {
   const [selectedKey, setSelectedKey] = useState('C');
