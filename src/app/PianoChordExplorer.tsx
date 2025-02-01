@@ -1,97 +1,43 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PianoChord from './PianoChord';
-import { playChordFunction, soundPresets } from './PianoChordPlayer';
 import { FaVolumeUp } from 'react-icons/fa';
 import { FullPiano } from './FullPiano';
 
-interface ScaleOption {
+interface PianoChordExplorerProps {
+  selectedKey: string;
+  selectedScale: ScaleOption;
+  selectedSound: string;
+  chords: string[][];
+  activeChordIndex: number | null;
+  activeNotes: string[];
+  keys: string[];
+  scales: ScaleOption[];
+  onKeyChange: (key: string) => void;
+  onScaleChange: (scale: ScaleOption) => void;
+  onChordPlay: (chord: string[], index: number) => void;
+  getChordName: (chord: string[]) => string;
+}
+
+export interface ScaleOption {
   name: string;
   intervals: number[];
 }
 
-export const PianoChordExplorer: React.FC = () => {
-  const [selectedKey, setSelectedKey] = useState('C');
-  const [selectedScale, setSelectedScale] = useState<ScaleOption>({
-    name: 'Major',
-    intervals: [0, 2, 4, 5, 7, 9, 11],
-  });
-  const [selectedSound, setSelectedSound] = useState('basicSine');
-  const [chords, setChords] = useState<string[][]>([]);
-  const [activeChordIndex, setActiveChordIndex] = useState<number | null>(null);
-  const [activeNotes, setActiveNotes] = useState<string[]>([]);
-
-  const keys = [
-    'C',
-    'C#',
-    'D',
-    'D#',
-    'E',
-    'F',
-    'F#',
-    'G',
-    'G#',
-    'A',
-    'A#',
-    'B',
-  ];
-
-  const scales: ScaleOption[] = [
-    { name: 'Major', intervals: [0, 2, 4, 5, 7, 9, 11] },
-    { name: 'Natural Minor', intervals: [0, 2, 3, 5, 7, 8, 10] },
-    { name: 'Harmonic Minor', intervals: [0, 2, 3, 5, 7, 8, 11] },
-    { name: 'Melodic Minor', intervals: [0, 2, 3, 5, 7, 9, 11] },
-    { name: 'Dorian', intervals: [0, 2, 3, 5, 7, 9, 10] },
-    { name: 'Phrygian', intervals: [0, 1, 3, 5, 7, 8, 10] },
-    { name: 'Lydian', intervals: [0, 2, 4, 6, 7, 9, 11] },
-    { name: 'Mixolydian', intervals: [0, 2, 4, 5, 7, 9, 10] },
-  ];
-
-  const soundOptions = Object.keys(soundPresets);
-
-  const generateChords = (key: string, scale: ScaleOption) => {
-    const keyIndex = keys.indexOf(key);
-    const scaleNotes = scale.intervals.map(
-      (interval) => keys[(keyIndex + interval) % 12],
-    );
-
-    return scaleNotes.map((root, index) => {
-      const third = scaleNotes[(index + 2) % 7];
-      const fifth = scaleNotes[(index + 4) % 7];
-      return [root, third, fifth];
-    });
-  };
-
-  const getChordName = (chord: string[]) => {
-    const [root, third, fifth] = chord;
-    const rootIndex = keys.indexOf(root);
-    const thirdInterval = (keys.indexOf(third) - rootIndex + 12) % 12;
-    const fifthInterval = (keys.indexOf(fifth) - rootIndex + 12) % 12;
-
-    if (thirdInterval === 4 && fifthInterval === 7) return `${root} Major`;
-    if (thirdInterval === 3 && fifthInterval === 7) return `${root} Minor`;
-    if (thirdInterval === 3 && fifthInterval === 6) return `${root} Diminished`;
-    if (thirdInterval === 4 && fifthInterval === 8) return `${root} Augmented`;
-    return `${root} (${third} ${fifth})`;
-  };
-
-  const playChord = (chord: string[], index: number) => {
-    playChordFunction(chord, selectedSound);
-    setActiveChordIndex(index);
-    setActiveNotes(chord);
-    // Reset the active states after a short delay
-    setTimeout(() => {
-      setActiveChordIndex(null);
-      setActiveNotes([]);
-    }, 500);
-  };
-
-  useEffect(() => {
-    const newChords = generateChords(selectedKey, selectedScale);
-    setChords(newChords);
-  }, [selectedKey, selectedScale]);
-
+export const PianoChordExplorer: React.FC<PianoChordExplorerProps> = ({
+  selectedKey,
+  selectedScale,
+  chords,
+  activeChordIndex,
+  activeNotes,
+  keys,
+  scales,
+  onKeyChange,
+  onScaleChange,
+  onChordPlay,
+  getChordName,
+}) => {
   return (
     <div className='flex flex-col items-center p-4 bg-gray-100 rounded-lg shadow-md'>
       <h2 className='text-xl font-bold mb-4'>Chord Explorer</h2>
@@ -99,7 +45,7 @@ export const PianoChordExplorer: React.FC = () => {
       <div className='flex space-x-4 mb-4'>
         <select
           value={selectedKey}
-          onChange={(e) => setSelectedKey(e.target.value)}
+          onChange={(e) => onKeyChange(e.target.value)}
           className='p-2 border rounded'
         >
           {keys.map((key) => (
@@ -112,7 +58,7 @@ export const PianoChordExplorer: React.FC = () => {
         <select
           value={selectedScale.name}
           onChange={(e) =>
-            setSelectedScale(
+            onScaleChange(
               scales.find((scale) => scale.name === e.target.value) ||
                 scales[0],
             )
@@ -122,18 +68,6 @@ export const PianoChordExplorer: React.FC = () => {
           {scales.map((scale) => (
             <option key={scale.name} value={scale.name}>
               {scale.name}
-            </option>
-          ))}
-        </select>
-
-        <select
-          value={selectedSound}
-          onChange={(e) => setSelectedSound(e.target.value)}
-          className='p-2 border rounded'
-        >
-          {soundOptions.map((sound) => (
-            <option key={sound} value={sound}>
-              {sound}
             </option>
           ))}
         </select>
@@ -155,7 +89,10 @@ export const PianoChordExplorer: React.FC = () => {
               <h4 className='text-md font-semibold mr-2'>
                 {getChordName(chord)} ({chord.join(' - ')})
               </h4>
-              <button onClick={() => playChord(chord, index)} className='ml-2'>
+              <button
+                onClick={() => onChordPlay(chord, index)}
+                className='ml-2'
+              >
                 <FaVolumeUp />
               </button>
             </div>
@@ -166,26 +103,6 @@ export const PianoChordExplorer: React.FC = () => {
 
       <div className='w-full my-8'>
         <FullPiano activeNotes={activeNotes} keys={keys} />
-      </div>
-
-      <h3 className='text-lg font-semibold mb-4'>Chord Pad</h3>
-      <div className='grid grid-cols-3 gap-4 w-full max-w-md'>
-        {chords.slice(0, 9).map((chord, index) => (
-          <button
-            key={index}
-            onClick={() => playChord(chord, index)}
-            className={`aspect-square text-white rounded-lg shadow-md 
-                       transition-colors duration-200 flex flex-col items-center justify-center p-2
-                       ${
-                         activeChordIndex === index
-                           ? 'bg-blue-600'
-                           : 'bg-blue-500'
-                       }`}
-          >
-            <span className='font-bold'>{getChordName(chord)}</span>
-            <span className='text-sm'>{chord.join('-')}</span>
-          </button>
-        ))}
       </div>
     </div>
   );
