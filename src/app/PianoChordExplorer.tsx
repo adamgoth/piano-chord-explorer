@@ -39,7 +39,7 @@ export const PianoChordExplorer: React.FC<PianoChordExplorerProps> = ({
   getChordName,
 }) => {
   return (
-    <div className='flex flex-col items-center p-4 bg-gray-100 rounded-lg shadow-md'>
+    <div className='flex flex-col items-center'>
       <h2 className='text-xl font-bold mb-4'>Chord Explorer</h2>
 
       <div className='flex space-x-4 mb-4'>
@@ -72,10 +72,6 @@ export const PianoChordExplorer: React.FC<PianoChordExplorerProps> = ({
           ))}
         </select>
       </div>
-
-      <h3 className='text-lg font-semibold mb-2'>
-        Chords in {selectedKey} {selectedScale.name}
-      </h3>
 
       <div className='flex flex-wrap gap-4 w-full justify-evenly'>
         {chords.map((chord, index) => (

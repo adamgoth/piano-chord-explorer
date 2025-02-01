@@ -86,7 +86,7 @@ export default function Home() {
 
   return (
     <main className='flex min-h-screen flex-col items-center justify-between p-24 gap-8'>
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full'>
+      <div className='flex flex-col gap-8 w-full'>
         <div className='bg-white rounded-lg shadow-lg p-6'>
           <PianoChordExplorer
             selectedKey={selectedKey}
@@ -104,21 +104,23 @@ export default function Home() {
           />
         </div>
 
-        <div className='bg-white rounded-lg shadow-lg p-6'>
-          <ChordPad
-            chords={chords}
-            activeChordIndex={activeChordIndex}
-            onChordPlay={playChord}
-            getChordName={getChordName}
-          />
-        </div>
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
+          <div className='bg-white rounded-lg shadow-lg p-6'>
+            <ChordPad
+              chords={chords}
+              activeChordIndex={activeChordIndex}
+              onChordPlay={playChord}
+              getChordName={getChordName}
+            />
+          </div>
 
-        <div className='bg-white rounded-lg shadow-lg p-6'>
-          <h3 className='text-lg font-semibold mb-4'>Sound Settings</h3>
-          <SoundExplorer
-            selectedSound={selectedSound}
-            onSoundChange={setSelectedSound}
-          />
+          <div className='bg-white rounded-lg shadow-lg p-6'>
+            <h3 className='text-lg font-semibold mb-4'>Sound Settings</h3>
+            <SoundExplorer
+              selectedSound={selectedSound}
+              onSoundChange={setSelectedSound}
+            />
+          </div>
         </div>
       </div>
     </main>
